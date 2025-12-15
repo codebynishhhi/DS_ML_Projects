@@ -16,7 +16,7 @@ Platforms like Cars24, CarDekho, OLX Autos do automated valuation
 
 Sellers want guidance for listing price
 
-Buyers want to avoid overpaying
+Buyers want to avoid overpaying.
 
 Machine learning helps build a valuation model that takes a car description → returns estimated market price.
 
@@ -32,5 +32,56 @@ Machine learning helps build a valuation model that takes a car description → 
 8. Exterior and interior colors show high cardinality; colors can be grouped.
 9. The accident column has two categories; useful for binary encoding.
 10. Clean_title has only one category (Yes), providing no variance; should be dropped.
+
+## preprocessing column-by-column.
+
+# Numeric columns
+
+model_year, mileage, engine_numeric, price
+
+Preprocessing:
+
+Convert all to numeric
+
+Fix skew (log transform)
+
+StandardScaler if using LR/KNN/SVM
+
+No scaling for tree models
+
+# categorical (low cardinality)
+
+fuel_type, transmission, accident
+
+Preprocessing:
+
+One-hot encoding
+
+# Categorical (high cardinality)
+
+brand, ext_col, int_col
+
+Preprocessing:
+
+Group rare categories → “Other Brand”
+
+Reduce categories
+
+One-hot encode OR target encode
+
+# Very high-cardinality text columns
+
+model (1898 unique), engine (complex string patterns)
+
+Preprocessing:
+
+Extract sub-features
+
+Do NOT one-hot encode entire column
+
+# Columns to drop
+
+clean_title = only one unique value
+→ Drop completely.
 
 ------------------------------------------------------------------------------------
