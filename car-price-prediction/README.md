@@ -85,3 +85,155 @@ clean_title = only one unique value
 → Drop completely.
 
 ------------------------------------------------------------------------------------
+
+- Used Car Price Prediction – Machine Learning Project
+- Problem Statement
+    The goal of this project is to predict the selling price of a used car based on its characteristics such as brand, age, mileage, fuel type, engine details, transmission, colors, and accident history.
+
+- Inputs
+    Brand
+    Model year
+    Mileage
+    Fuel type
+    Engine details
+    Transmission
+    Exterior & interior color
+    Accident history
+    Clean title indicator
+
+- Output
+
+Target variable: price (selling price of the used car)
+
+- Why Predict Used Car Prices?
+
+In real-world applications:
+
+    Car dealers want to estimate fair market value
+
+    Platforms like Cars24, CarDekho, OLX Autos use automated pricing systems
+
+    Sellers want guidance for listing price
+
+    Buyers want to avoid overpaying
+
+    Machine Learning helps build a valuation system that maps
+    car attributes → estimated market price
+
+- Dataset Overview
+
+Rows: 4009 used car listings
+
+Brands: 57 unique brands
+
+- Target: Selling price (price)
+
+- Initial Data Understanding (describe(include='all').T)
+
+    - Key insights from dataset inspection:
+
+    Dataset contains 4009 records across 57 brands
+
+    Ford is the most frequent brand (386 listings)
+
+    model column has very high cardinality (1898 unique values) → not suitable for direct one-hot encoding
+
+    model_year ranges from 1974 to 2024, showing wide age diversity
+
+    milage stored as strings (e.g., "110,000 mi.") → required cleaning
+
+    fuel_type is dominated by Gasoline, but multiple fuel categories exist
+
+    engine column contains complex text → numeric engine capacity extracted
+
+    transmission has many variants but mostly revolves around Automatic
+
+    Exterior & interior colors have high cardinality → simplified into groups
+
+    clean_title has only one unique value → provides no information and was dropped
+
+-  Data Cleaning & Preprocessing
+    - Numerical Features
+        model_year
+        milage
+        engine_num
+        price
+    - Steps applied:
+        Converted all to numeric
+        Handled skewed distributions using log transformation
+    - Created derived features:
+        car_age
+        milage_log
+        price_log
+
+Scaling applied where required (for linear models)
+
+- Categorical Features (Low Cardinality)
+    fuel_type
+    transmission_simple
+    accident_flag
+    - Processing:
+        Cleaned inconsistent labels
+        One-hot encoded
+
+- Categorical Features (High Cardinality)
+    brand
+    ext_col
+    int_col
+    - Processing:
+        Grouped rare categories into "Other"
+        Reduced dimensionality
+        One-hot encoded after grouping
+
+- High Cardinality Text Features
+    model
+    engine (raw text)
+
+- Approach:
+    Avoided direct encoding
+    Extracted meaningful numeric features
+    Dropped raw text columns
+
+- Dropped Columns
+    clean_title → only one unique value
+
+- Exploratory Data Analysis (EDA)
+    - Univariate Analysis
+        Distribution analysis for numerical variables
+        Identified skewness, outliers, and data ranges
+        Bivariate Analysis
+        Scatter plots and box plots to study relationships with price
+
+- Key observations:
+    Car age ↑ → Price ↓
+    Mileage ↑ → Price ↓
+    Accident history lowers resale value
+    Fuel type & transmission moderately influence price
+
+- Modeling Approach
+    Feature Set Used - 
+        brand, car_age, milage_log, engine_num,
+        fuel_type, transmission_simple,
+        clean_title_flag, accident_flag,
+        ext_col_simple, int_col_simple
+
+- Target - price_log
+
+- Models Trained & Evaluated
+    Model	                    RMSE	R² Score
+    Linear Regression	        ~0.46	~0.68
+    Random Forest (Baseline)    ~0.41	~0.75
+    Random Forest (Tuned)	    ~0.41	~0.74
+    Gradient Boosting	        ~0.42	~0.73
+    XGBoost (Best)	            ~0.39	~0.77
+
+- Best Model
+    XGBoost Regressor
+    Captures non-linear relationships
+    Explains ~77% variance in used car prices
+    Lowest RMSE among all models
+
+- Model Saving & Reusability
+    Final model saved as a pipeline
+    Includes preprocessing + model
+    Ready for deployment in production / Streamlit app
